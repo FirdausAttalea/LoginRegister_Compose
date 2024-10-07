@@ -1,6 +1,6 @@
 # Android Login & Register Using Firebase 
 
-This time I will give some instructions on making the website display of the simple Login & Register page using firebase & kotlin.
+This time I will give some instructions on making the android display of the simple Login & Register page using firebase & kotlin.
 <h1 dir="auto"></h1>
 <h3 align="left" > Language: </p>
 <p align="left">
