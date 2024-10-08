@@ -95,7 +95,8 @@ fun HeadingTextContent(value: String) {
 }
 
 @Composable
-fun MyTextFieldContent(labelValue: String, painter: Painter, onTextSelected: (String) -> Unit) {
+fun MyTextFieldContent(labelValue: String, painter: Painter, onTextSelected: (String) -> Unit
+                        , errorStatus: Boolean = false) {
     val textValue = remember {
         mutableStateOf("")
     }
@@ -134,7 +135,8 @@ fun MyTextFieldContent(labelValue: String, painter: Painter, onTextSelected: (St
         )
 }
 @Composable
-fun EmailFieldContent(labelValue: String, painter: Painter, onTextSelected: (String) -> Unit) {
+fun EmailFieldContent(labelValue: String, painter: Painter, onTextSelected: (String) -> Unit,
+                      errorStatus: Boolean = false) {
     val textValue = remember {
         mutableStateOf("")
     }
@@ -162,16 +164,18 @@ fun EmailFieldContent(labelValue: String, painter: Painter, onTextSelected: (Str
                     .padding(10.dp)
                     .size(24.dp),
                 imageVector = Icons.Filled.Email,
-                contentDescription = "Person Icon",
+                contentDescription = "Email Icon",
                 tint = TextColor,
 
                 )
-        }
+        },
+        isError = !errorStatus
     )
 }
 
 @Composable
-fun PasswordFieldContent(labelValue: String, painter: Painter, onTextSelected: (String) -> Unit) {
+fun PasswordFieldContent(labelValue: String, painter: Painter, onTextSelected: (String) -> Unit,
+                         errorStatus: Boolean = false) {
     val localFocusManager = LocalFocusManager.current
     val password = remember {
         mutableStateOf("")
@@ -226,12 +230,13 @@ fun PasswordFieldContent(labelValue: String, painter: Painter, onTextSelected: (
                 Icon(imageVector = iconImage, contentDescription = description)
             }
         },
-        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation()
+        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+        isError = errorStatus
     )
 }
 
 @Composable
-fun CheckboxContent(value: String, onTextSelected : (String)-> Unit) {
+fun CheckboxContent(value: String, onTextSelected : (String)-> Unit, onCheckedChange: (Boolean) -> Unit) {
     Row(modifier = Modifier
         .fillMaxWidth()
         .heightIn(20.dp),verticalAlignment = Alignment.CenterVertically)
@@ -242,6 +247,7 @@ fun CheckboxContent(value: String, onTextSelected : (String)-> Unit) {
         Checkbox(checked = checkedState.value,
             onCheckedChange ={
                 checkedState.value != checkedState.value
+                onCheckedChange.invoke(it)
             })
 
         ClickableTextContent(value = value, onTextSelected)

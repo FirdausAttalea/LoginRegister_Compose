@@ -8,6 +8,7 @@ sealed class Screen {
     object SignUpScreen : Screen()
     object TermsAndConditionsScreen : Screen()
     object LoginScreen : Screen()
+    object HomeScreen : Screen()
 }
 object PostOfficeAppRouter{
     var currentScreen: MutableState<Screen> = mutableStateOf(Screen.SignUpScreen)

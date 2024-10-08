@@ -1,6 +1,5 @@
 package com.example.pamakhir.screens
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,21 +14,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pamakhir.R
-import com.example.pamakhir.components.ButtonComponent
-import com.example.pamakhir.components.ClickableTextLoginContent
-import com.example.pamakhir.components.DividerTextComponent
-import com.example.pamakhir.components.EmailFieldContent
-import com.example.pamakhir.components.HeadingTextContent
-import com.example.pamakhir.components.NormalTextContent
-import com.example.pamakhir.components.PasswordFieldContent
-import com.example.pamakhir.components.UnderLinedTextComponent
+import com.example.pamakhir.components.*
+import com.example.pamakhir.data.LoginViewModel
+import com.example.pamakhir.data.UIEvent
 import com.example.pamakhir.navigation.PostOfficeAppRouter
 import com.example.pamakhir.navigation.Screen
 import com.example.pamakhir.navigation.SystemBackButtonHandler
 
 @Composable
-fun LoginScreen(){
+fun LoginScreen(
+    loginViewModel: LoginViewModel = viewModel()
+) {
     Surface(
         color = Color.White,
         modifier = Modifier
@@ -38,32 +35,54 @@ fun LoginScreen(){
             .padding(28.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            NormalTextContent(value = stringResource(id = R.string.login))
-            HeadingTextContent(value = stringResource(id = R.string.welcome_back))
+            NormalTextContent(value = stringResource(id = R.string.text_atas))
+            HeadingTextContent(value = stringResource(id = R.string.create_account))
             Spacer(modifier = Modifier.height(80.dp))
 
             EmailFieldContent(
                 labelValue = stringResource(id = R.string.email),
-                painter = painterResource(id = R.drawable.email)
+                painter = painterResource(id = R.drawable.email),
+                onTextSelected = {
+                    loginViewModel.onEvent(UIEvent.EmailChanged(it))
+                },
+                errorStatus = loginViewModel.registrationUIState.value.emailError
             )
+
             Spacer(modifier = Modifier.height(5.dp))
+
             PasswordFieldContent(
                 labelValue = stringResource(id = R.string.password),
-                painter = painterResource(id = R.drawable.gembok)
+                painter = painterResource(id = R.drawable.gembok),
+                onTextSelected = {
+                    loginViewModel.onEvent(UIEvent.PasswordChanged(it))
+                },
+                errorStatus = loginViewModel.registrationUIState.value.passwordError
             )
-            UnderLinedTextComponent(value = stringResource(id = R.string.forgot_password))
 
             Spacer(modifier = Modifier.height(40.dp))
-            ButtonComponent(value = stringResource(id = R.string.login))
+
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            ButtonComponent(
+                value = stringResource(id = R.string.register),
+                onButtonClicked = {
+                    loginViewModel.onEvent(UIEvent.RegisterButtonClicked)
+                },
+                isEnabled = loginViewModel.allValidationsPassed.value
+            )
+
             Spacer(modifier = Modifier.height(18.dp))
             DividerTextComponent()
             Spacer(modifier = Modifier.height(40.dp))
 
-            ClickableTextLoginContent(tryingToLogin = false, onTextSelected = {
-                PostOfficeAppRouter.navigateTo(Screen.SignUpScreen)
-            })
+            ClickableTextLoginContent(
+                tryingToLogin = true,
+                onTextSelected = {
+                    PostOfficeAppRouter.navigateTo(Screen.HomeScreen)
+                }
+            )
         }
-
     }
 
     SystemBackButtonHandler {
@@ -71,9 +90,8 @@ fun LoginScreen(){
     }
 }
 
-
 @Preview
 @Composable
-fun DefaultPreviewOfLoginScreen(){
+fun DefaultPreviewOfLoginScreen() {
     LoginScreen()
 }

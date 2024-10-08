@@ -16,5 +16,6 @@
     <string name="goto_login">Already have account? Login </string>
     <string name="goto_register">Do not have account? Register </string>
     <string name="forgot_password">Forgot your password?</string>
+    <string name="home">home</string>
 
 </resources>
