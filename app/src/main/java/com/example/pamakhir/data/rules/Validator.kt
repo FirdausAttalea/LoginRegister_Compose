@@ -1,33 +1,50 @@
 package com.example.pamakhir.data.rules
 
+import android.util.Log
+
 object Validator {
+
+
     fun validateFirstName(firstName: String): ValidationResult {
         return ValidationResult(
-            (!firstName.isNullOrEmpty() && firstName.length >= 4)
+            (!firstName.isNullOrEmpty() && firstName.length > 2)
         )
+
     }
+
     fun validateLastName(lastName: String): ValidationResult {
         return ValidationResult(
-            (!lastName.isNullOrEmpty() && lastName.length >= 4)
+            (!lastName.isNullOrEmpty() && lastName.length > 2)
         )
     }
+
     fun validateEmail(email: String): ValidationResult {
         return ValidationResult(
-            (!email.isNullOrEmpty())
+            (!email.isNullOrEmpty() && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches())
         )
     }
+
     fun validatePassword(password: String): ValidationResult {
         return ValidationResult(
-            (!password.isNullOrEmpty() && password.length >= 4)
+            (!password.isNullOrEmpty() && password.length > 5)
         )
     }
-    fun validatePrivacyPolicyAcceptance(statusValue: Boolean): ValidationResult {
+
+    fun validatePrivacyPolicyAcceptance(statusValue:Boolean):ValidationResult{
         return ValidationResult(
             statusValue
         )
     }
+
 }
 
 data class ValidationResult(
-    val status: Boolean
+    val status: Boolean = false
 )
+
+
+
+
+
+
+

@@ -7,9 +7,10 @@ import com.example.pamakhir.data.rules.Validator
 import com.example.pamakhir.navigation.PostOfficeAppRouter
 import com.example.pamakhir.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 
-class LoginViewModel : ViewModel() {
-    private val TAG = LoginViewModel::class.simpleName
+class SignUpViewModel : ViewModel() {
+    private val TAG = SignUpViewModel::class.simpleName
 
     var registrationUIState = mutableStateOf(RegistrationUIState())
 
@@ -17,66 +18,52 @@ class LoginViewModel : ViewModel() {
 
     var signUpInProgress = mutableStateOf(false)
 
-    fun onEvent(event: UIEvent) {
+    fun onEvent(event: SignUpUIEvent) {
         when (event) {
-            is UIEvent.FirstNameChanged -> {
+            is SignUpUIEvent.FirstNameChanged -> {
                 registrationUIState.value = registrationUIState.value.copy(
                     firstName = event.firstName
                 )
-                validateDataWithRules()
                 printState()
 
             }
 
-            is UIEvent.LastNameChanged -> {
+            is SignUpUIEvent.LastNameChanged -> {
                 registrationUIState.value = registrationUIState.value.copy(
                     lastName = event.lastName
                 )
-                validateDataWithRules()
                 printState()
             }
 
-            is UIEvent.EmailChanged -> {
+            is SignUpUIEvent.EmailChanged -> {
                 registrationUIState.value = registrationUIState.value.copy(
                     email = event.email
                 )
                 printState()
-                validateDataWithRules()
             }
 
-            is UIEvent.PasswordChanged -> {
+            is SignUpUIEvent.PasswordChanged -> {
                 registrationUIState.value = registrationUIState.value.copy(
                     password = event.password
                 )
                 printState()
-                validateDataWithRules()
             }
-            is UIEvent.PrivacyPolicyCheckBoxClicked -> {
+            is SignUpUIEvent.RegisterButtonClicked -> {
+                signUp()
+            }
+            is SignUpUIEvent.PrivacyPolicyCheckBoxClicked -> {
                 registrationUIState.value = registrationUIState.value.copy(
                     privacyPolicyAccepted = event.status
                 )
-                printState()
             }
-
-            is UIEvent.RegisterButtonClicked -> {
-                signUp()
-            }
-
-
         }
+        validateDataWithRules()
+
     }
 
 
-    private fun signUp() {
-        Log.d(TAG, "Inside_signUp")
-        printState()
-        createUserInFirebase(
-            email = registrationUIState.value.email,
-            password = registrationUIState.value.password
-        )
-    }
 
-    fun validateDataWithRules() {
+    private fun validateDataWithRules() {
         val firstNameResult = Validator.validateFirstName(
             firstName = registrationUIState.value.firstName
         )
@@ -107,6 +94,7 @@ class LoginViewModel : ViewModel() {
             passwordError = passwordResult.status,
             privacyPolicyError = privacyPolicyResult.status
         )
+
         if(firstNameResult.status && lastNameResult.status && emailResult.status
             && passwordResult.status && privacyPolicyResult.status){
             allValidationsPassed.value = true
@@ -120,7 +108,16 @@ class LoginViewModel : ViewModel() {
         Log.d(TAG, registrationUIState.value.toString())
     }
 
-    fun createUserInFirebase(email: String, password: String){
+    private fun signUp() {
+        Log.d(TAG, "Inside_signUp")
+        printState()
+        createUserInFirebase(
+            email = registrationUIState.value.email,
+            password = registrationUIState.value.password
+        )
+    }
+
+    private fun createUserInFirebase(email: String, password: String){
 
         signUpInProgress.value = true
 
@@ -143,6 +140,22 @@ class LoginViewModel : ViewModel() {
                 Log.d(TAG, "Exception = ${it.localizedMessage}")
             }
         Log.d(TAG, "Inside_createUserInFirebase")
+    }
+
+    fun logout(){
+        val firebaseAuth = FirebaseAuth.getInstance()
+        firebaseAuth.signOut()
+
+        val authStateListener = AuthStateListener {
+            if(it.currentUser == null){
+                Log.d(TAG,"Inside sign out Success")
+                PostOfficeAppRouter.navigateTo(Screen.LoginScreen)
+            } else {
+                Log.d(TAG,"Inside sign out is not Complete")
+
+            }
+        }
+        firebaseAuth.addAuthStateListener(authStateListener)
     }
 
 }

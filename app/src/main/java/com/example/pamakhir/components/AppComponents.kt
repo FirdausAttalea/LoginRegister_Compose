@@ -2,6 +2,7 @@ package com.example.pamakhir.components
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -59,6 +60,7 @@ import com.example.pamakhir.ui.theme.ComponentShapes
 import com.example.pamakhir.ui.theme.Purple40
 import com.example.pamakhir.ui.theme.PurpleGrey40
 import com.example.pamakhir.ui.theme.TextColor
+
 
 @Composable
 fun NormalTextContent(value: String) {
@@ -246,8 +248,8 @@ fun CheckboxContent(value: String, onTextSelected : (String)-> Unit, onCheckedCh
         }
         Checkbox(checked = checkedState.value,
             onCheckedChange ={
-                checkedState.value != checkedState.value
-                onCheckedChange.invoke(it)
+                newValue -> checkedState.value =newValue
+                onCheckedChange.invoke(newValue)
             })
 
         ClickableTextContent(value = value, onTextSelected)
@@ -283,40 +285,25 @@ fun ClickableTextContent(value: String, onTextSelected : (String)-> Unit) {
     })
 }
 @Composable
-fun ButtonComponent(value: String, onButtonClicked : () -> Unit, isEnabled: Boolean = false) {
+fun ButtonComponent(value: String, onButtonClicked: () -> Unit, isEnabled: Boolean = false) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(48.dp),
-        onClick = { onButtonClicked.invoke() },
-        contentPadding = PaddingValues(),
-        colors = ButtonDefaults.buttonColors(Color.Transparent),
-        shape = RoundedCornerShape(50.dp),
-        enabled = isEnabled
-    ){
-
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(48.dp)
-            .background(
-                brush = Brush.horizontalGradient(
-                    listOf(PurpleGrey40, Purple40)
-                ),
-                shape = RoundedCornerShape(50.dp)
-
-            ),
-        contentAlignment = Alignment.Center
+        onClick = onButtonClicked,
+        enabled = isEnabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isEnabled) Purple40 else PurpleGrey40,
+            contentColor = Color.White
+        ),
+        shape = RoundedCornerShape(50.dp)
     ) {
         Text(
             text = value,
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
+            fontWeight = FontWeight.Bold
         )
     }
-
 }
 
 @Composable
@@ -347,6 +334,40 @@ fun ClickableTextLoginContent(tryingToLogin:Boolean = true,onTextSelected : (Str
     val initialText = if(tryingToLogin) "Already have account? "
     else "Do not have account? "
     val loginText = if(tryingToLogin) "Login" else "Register"
+    val annotatedString = buildAnnotatedString {
+        append(initialText)
+        withStyle(style = SpanStyle(color = Color.Blue)) {
+            pushStringAnnotation(tag = loginText, annotation = loginText)
+            append(loginText)
+        }
+    }
+    ClickableText(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 40.dp),
+        style = TextStyle(
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal,
+            fontStyle = FontStyle.Normal,
+            textAlign = TextAlign.Center,
+        ),
+        text = annotatedString, onClick = { offset ->
+            annotatedString.getStringAnnotations(offset, offset)
+                .firstOrNull()?.also { span ->
+                    Log.d("ClickableTextContent", "${span}")
+
+                    if(span.item == loginText){
+                        onTextSelected(span.item)
+                    }
+                }
+        })
+}
+
+@Composable
+fun ClickableTextRegisterContent(tryingToRegister:Boolean = true,onTextSelected : (String)-> Unit) {
+    val initialText = if(tryingToRegister) "Do not have account? "
+    else "Already have account? "
+    val loginText = if(tryingToRegister) "Register" else "Login"
     val annotatedString = buildAnnotatedString {
         append(initialText)
         withStyle(style = SpanStyle(color = Color.Blue)) {
