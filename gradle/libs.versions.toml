@@ -9,6 +9,7 @@ lifecycleRuntimeKtx = "2.8.4"
 activityCompose = "1.9.2"
 composeBom = "2024.04.01"
 firebase-bom = "33.4.0"
+
 lifecycle = "2.7.0"
 gms-google-services = "4.4.2"
 

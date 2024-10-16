@@ -233,7 +233,7 @@ fun PasswordFieldContent(labelValue: String, painter: Painter, onTextSelected: (
             }
         },
         visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
-        isError = errorStatus
+        isError = !errorStatus
     )
 }
 

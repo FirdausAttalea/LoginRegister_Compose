@@ -80,6 +80,7 @@ class SignUpViewModel : ViewModel() {
             statusValue = registrationUIState.value.privacyPolicyAccepted
         )
 
+        //logcat set
         Log.d(TAG, "Inside_validateDataWithRules")
         Log.d(TAG, "firstNameResult = $firstNameResult")
         Log.d(TAG, "lastNameResult = $lastNameResult")

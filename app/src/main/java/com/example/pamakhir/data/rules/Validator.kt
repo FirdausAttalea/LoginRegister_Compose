@@ -7,7 +7,7 @@ object Validator {
 
     fun validateFirstName(firstName: String): ValidationResult {
         return ValidationResult(
-            (!firstName.isNullOrEmpty() && firstName.length > 2)
+            (!firstName.isNullOrEmpty() && firstName.length  > 2)
         )
 
     }
